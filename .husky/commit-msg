@@ -1,0 +1,11 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+email_domain=$(git config user.email | awk -F@ '{print $2}')
+
+if [ "$email_domain" != "rxc.co.kr" ]; then
+  echo "\033[0;31mInvalid email domain. Please use @rxc.co.kr domain for your git email.\033[0m"
+  exit 1
+fi
+
+npx --no-install commitlint --edit ""

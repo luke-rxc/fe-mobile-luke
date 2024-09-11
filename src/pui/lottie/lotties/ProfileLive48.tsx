@@ -1,0 +1,8 @@
+import styled from 'styled-components';
+import * as lottieProfileLive48 from '@assets/lotties/profile_live_48.json';
+import { Lottie } from '../Lottie';
+
+/**
+ * 프로필 live 상태 - 48 size Lottie
+ */
+export const ProfileLive48 = styled(Lottie).attrs({ lottieData: lottieProfileLive48 })``;

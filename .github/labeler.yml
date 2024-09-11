@@ -1,0 +1,45 @@
+app-content:
+  - src/apps/content/**/*
+app-goods:
+  - src/apps/goods/**/*
+app-home:
+  - src/apps/home/**/*
+app-live:
+  - src/apps/live/**/*
+app-member:
+  - src/apps/member/**/*
+app-mypage:
+  - src/apps/mypage/**/*
+app-notification:
+  - src/apps/notification/**/*
+app-order:
+  - src/apps/order/**/*
+app-policy:
+  - src/apps/policy/**/*
+app-proto:
+  - src/apps/proto/**/*
+app-search:
+  - src/apps/search/**/*
+app-showroom:
+  - src/apps/showroom/**/*
+app-cs:
+  - src/apps/cs/**/*
+common:
+  - any: ['src/**/*', '!src/apps/**/*', '!src/pui/**/*', '!src/components/**/*']
+configuration:
+  - apps*
+  - commitlint.config.js
+  - craco.config.js
+  - package*.json
+  - propfile.js
+  - stylelint.config.js
+  - tsconfig.json
+  - tsconfig.paths.json
+  - .*/**
+  - environments/**/*
+documentation:
+  - '**/*.md'
+pui:
+  - 'src/pui/**/*'
+pui-legacy:
+  - 'src/components/**/*'

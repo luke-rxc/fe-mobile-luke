@@ -1,0 +1,51 @@
+{
+  "editor.defaultFormatter": null,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": true
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": true
+  },
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit"
+  },
+  "cSpell.words": [
+    "chromakey",
+    "hocs",
+    "inquiryable",
+    "kakao",
+    "Mweb",
+    "naver",
+    "neue",
+    "precomposed",
+    "PREORDER",
+    "prizm",
+    "REQUESTABLE",
+    "Scroller",
+    "sendbird",
+    "signin",
+    "tabmenu",
+    "unfollow"
+  ],
+  "cSpell.ignorePaths": [
+    "node_modules",
+    "package.json",
+    ".vscode/extensions.json",
+    ".vscode/settings.json",
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "stylelint.validate": ["css", "scss", "typescript", "typescriptreact"]
+}

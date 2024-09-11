@@ -1,0 +1,184 @@
+{
+  "pui-create": {
+    "prefix": "pui",
+    "body": [
+      "import React, { forwardRef } from 'react';",
+      "import styled from 'styled-components';",
+      "",
+      "export interface ${1:ComponentName}Props extends React.HTMLAttributes<${2:ComponentType}> {",
+      "  // props",
+      "}",
+      "",
+      "export const ${1:ComponentName}Component = forwardRef<${2:ComponentType}, ${1:ComponentName}Props>((props, ref) => {",
+      "  return <${3:element}>{/* content */}</${3:element}>;",
+      "});",
+      "",
+      "/**",
+      " * ${1:ComponentName} Component",
+      " */",
+      "export const ${1:ComponentName} = styled(${1:ComponentName}Component)`",
+      "  // styles",
+      "`;"
+    ],
+    "description": "PUI 컴포넌트 작성을 위한 기본 템플릿을 제공합니다"
+  },
+	"pui-storybook": {
+    "prefix": "pui-storybook",
+    "body": [
+			"import { ComponentStory, ComponentMeta } from '@storybook/react';",
+			"import { StoriesMenu } from '@stories/menu';",
+			"import { ${1:ComponentName}, ${1:ComponentName}Component } from './${1:ComponentName}';",
+			"",
+			"export default {",
+			"  title: `${StoriesMenu.PUI}/${1:ComponentName}`,",
+			"  component: ${1:ComponentName},",
+			"  parameters: {",
+			"    design: [",
+			"      {",
+			"        name: 'figma - PDS',",
+			"        type: 'figma',",
+			"        url: 'figma url',",
+			"      },",
+			"    ],",
+			"  },",
+			"} as ComponentMeta<typeof ${1:ComponentName}Component>;",
+			"",
+			"const Template: ComponentStory<typeof ${1:ComponentName}Component> = ({ ...args }) => <${1:ComponentName} {...args} />;",
+			"",
+			"export const 기본 = Template.bind({});",
+			"",
+			"기본.args = {",
+			"  // input props",
+			"};",
+      "",
+    ],
+    "description": "Storybook 작성을 위한 기본 템플릿을 제공합니다"
+  },
+  // PUI 기본 템플릿
+  "pui-readme": {
+    "prefix": "#",
+    "body": [
+      "# [컴포넌트명](최초지라URL or Figma URL or Notion URL)",
+      "  * [PUI리스트](../README.md)",
+      "",
+      "## Changelog",
+      "",
+      "### [${CURRENT_YEAR}.${CURRENT_MONTH}.${CURRENT_DATE}](https://rxc.atlassian.net/browse/FE-지라번호)",
+      "#### Added",
+      "  * 새로운 기능",
+      "#### Changed",
+      "  * 기존 기능의 변경사항",
+      "#### Deprecated",
+      "  * 곧 지워질 기능",
+      "#### Removed",
+      "  * 지금 지워진 기능",
+      "#### Fixed",
+      "  * 버그 픽스",
+      "#### Security",
+      "  * 취약점이 있는 경우",
+      "#### Etc",
+      "  * 문서수정(Readme.md, storybook) 및 오타 수정등의 리펙토링",
+    ],
+    "description": "PUI README Template",
+    "scope": ["markdown", "*."],
+  },
+
+  // PUI README.md 제목
+  "pui-readme-title": {
+    "prefix": "# [컴포넌트명](최초지라URL or Figma URL or Notion URL)",
+    "body": [
+      "# [컴포넌트명](최초지라URL or Figma URL or Notion URL)",
+    ],
+    "description": "PUI README 제목",
+    "scope": ["markdown", "*."]
+  },
+
+  // PUI changelog 제목
+  "pui-readme-changelog-title": {
+    "prefix": "### [YYYY.MM.DD](https://rxc.atlassian.net/browse/FE-지라번호)",
+    "body": [
+      "### [${CURRENT_YEAR}.${CURRENT_MONTH}.${CURRENT_DATE}](https://rxc.atlassian.net/browse/FE-지라번호)",
+    ],
+    "description": "PUI README Changelog Title",
+    "scope": ["markdown", "*."]
+  },
+  
+  // PUI changelog added 항목
+  "pui-readme-changelog-added": {
+    "prefix": "#### Added",
+    "body": [
+      "#### Added",
+      "  * 새로운 기능",
+    ],
+    "description": "새로운 기능",
+    "scope": ["markdown", "*."]
+  },
+  
+  // PUI changelog changed 항목
+  "pui-readme-changelog-changed": {
+    "prefix": "#### Changed",
+    "body": [
+      "#### Changed",
+      "  * 기존 기능의 변경사항",
+    ],
+    "description": "기존 기능의 변경사항",
+    "scope": ["markdown", "*."]
+  },
+  
+  
+  // PUI changelog deprecated 항목
+  "pui-readme-changelog-deprecated": {
+    "prefix": "#### Deprecated",
+    "body": [
+      "#### Deprecated",
+      "  * 곧 지워질 기능",
+    ],
+    "description": "곧 지워질 기능",
+    "scope": ["markdown", "*."]
+  },
+  
+  // PUI changelog removed 항목
+  "pui-readme-changelog-removed": {
+    "prefix": "#### Removed",
+    "body": [
+      "#### Removed",
+      "  * 지금 지워진 기능",
+    ],
+    "description": "지금 지워진 기능",
+    "scope": ["markdown", "*."]
+  },
+  
+  // PUI changelog fixed 항목
+  "pui-readme-changelog-fixed": {
+    "prefix": "#### Fixed",
+    "body": [
+      "#### Fixed",
+      "  * 버그 픽스",
+    ],
+    "description": "버그 픽스",
+    "scope": ["markdown", "*."]
+  },
+  
+  // PUI changelog security 항목
+  "pui-readme-changelog-security": {
+    "prefix": "#### Security",
+    "body": [
+      "#### Security",
+      "  * 취약점이 있는 경우",
+    ],
+    "description": "취약점이 있는 경우",
+    "scope": ["markdown", "*."]
+  },
+  
+  // PUI changelog etc 항목
+  "pui-readme-changelog-etc": {
+    "prefix": "#### Etc",
+    "body": [
+      "#### Etc",
+      "  * 문서수정(Readme.md, storybook) 및 오타 수정등의 리펙토링",
+    ],
+    "description": "문서수정(Readme.md, storybook) 및 오타 수정등의 리펙토링",
+    "scope": ["markdown", "*."]
+  },
+}
+

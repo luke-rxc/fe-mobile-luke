@@ -1,0 +1,22 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+contain_double_quotes() {
+  branch_name=$(git rev-parse --abbrev-ref HEAD)
+
+  while IFS='|' read hash message; do
+      if [[ $message =~ [\"] ]]; then
+        if [[ $branch_name =~ ^(conflict) ]]; then
+          echo $'\e[33m'"commit message has double quotes!!"
+          echo "$hash $message\n"$'\e[0m'
+          exit 0
+        fi
+        
+        echo "commit message has double quotes!!"
+        echo "$hash $message\n"
+        exit 1
+      fi
+  done
+}
+
+git log --pretty=format:'%h|%s' HEAD ^origin/master | contain_double_quotes

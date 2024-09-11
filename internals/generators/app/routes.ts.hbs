@@ -1,0 +1,8 @@
+import { lazy } from 'react';
+
+export default [
+  {
+    component: lazy(() => import('./pages/{{ pascalCase name }}')),
+    path: '/{{ camelCase name }}',
+  },
+];

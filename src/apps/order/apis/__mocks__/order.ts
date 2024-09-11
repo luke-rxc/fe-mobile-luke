@@ -1,0 +1,281 @@
+import { OrderSchema } from '../../schemas';
+
+export const orderPointAll = { orderId: 2108241506391169, shopId: null, paymentGatewayParameter: null };
+export const orderUsePG = {
+  orderId: 2108241509241170,
+  shopId: 'imp18533230',
+  paymentGatewayParameter: {
+    pg: 'html5_inicis',
+    payMethod: 'card',
+    merchantId: '2108241509241170',
+    name: 'rxc 부대찌개 밀키트',
+    amount: 500,
+    buyerEmail: 'rxc@rxc.co.kr',
+    buyerName: 'rxc',
+    buyerTel: '01012341234',
+  },
+};
+export const orderComplete: OrderSchema = {
+  isFinished: true,
+  orderId: 2202220014153070,
+  orderStatus: {
+    step: '20',
+    stepName: '결제완료',
+  },
+  checkoutId: 2839,
+  orderer: {
+    email: 'RXC@rxc.co.kr',
+    name: 'RXC',
+    phone: '01012341234',
+  },
+  payment: {
+    paymentType: {
+      type: 'PRIZM_PAY',
+      name: 'prizm페이',
+    },
+    totalSalesPrice: 742500,
+    usedPoint: 0,
+    usedCartCouponSale: 0,
+    usedGoodsCouponSale: 0,
+    totalShippingCost: 0,
+    amount: 742500,
+    paymentDate: 1645456456000,
+    pg: 'kcp',
+    pgForLog: 'kcp',
+    usedCartCoupon: null,
+  },
+  recipient: {
+    name: 'RXC',
+    phone: '01012341234',
+    postCode: '13020',
+    address: '경기 하남시 대성로 73',
+    addressDetail: '1234',
+    deliveryRequestMessage: '배송 전 연락 바랍니다',
+    isAddressRequired: true,
+  },
+  goodsType: 'NORMAL',
+  itemOptionList: [
+    {
+      id: 2658,
+      itemId: 2483,
+      brand: {
+        id: 2141,
+        name: 'Reigning Champ',
+        primaryImage: {
+          id: 15468,
+          path: 'brand/20220209/731d0a36-91c8-4397-a052-bac191faa41a.svg',
+          blurHash: null,
+          width: 0,
+          height: 0,
+        },
+        defaultShowRoomId: null,
+      },
+      goods: {
+        id: 671,
+        name: 'VELOUR CREWNECK',
+        primaryImage: {
+          id: 15482,
+          path: 'goods/20220209/896a9747-d608-4c27-af79-21acf6d4b8e6.jpeg',
+          blurHash:
+            '|#NdO9of~qt7xuj[WBfQRjxuayayayWBj[ayj[ay~qayIUayM{j[WBj[t7fQj[WBj[ofayofWBayxuayIUayt7j[t7j[ayWBj[ofayofayWBj[ayWBfQayj[t7fQWBayWBofayoffQWBj[WBj[ofRjj[t7fQayayWBfQj[',
+          width: 2048,
+          height: 2048,
+        },
+        consumerPrice: 275000,
+        price: 247500,
+        kind: 'REAL',
+        discountRate: 10,
+        showRoomId: 0,
+        code: 'jpy0',
+        label: null,
+        type: 'NORMAL',
+        shippingMethod: 'PARCEL',
+        categoryIdList: [1, 44, 45],
+        categoryNameList: ['의류', '기능성 의류', '기능성 의류 상의'],
+        option: {
+          id: 1278,
+          bookingDate: 1698049881657,
+          itemList: [
+            {
+              title: '사이즈',
+              value: 'M',
+            },
+          ],
+        },
+        packageOption: null,
+      },
+      statusInfo: {
+        step: '20',
+        stepName: '결제완료',
+      },
+      ea: 1,
+      priceWithEa: 247500,
+      showRoom: null,
+      usedCoupon: null,
+    },
+    {
+      id: 2659,
+      itemId: 2483,
+      brand: {
+        id: 2141,
+        name: 'Reigning Champ',
+        primaryImage: {
+          id: 15468,
+          path: 'brand/20220209/731d0a36-91c8-4397-a052-bac191faa41a.svg',
+          blurHash: null,
+          width: 0,
+          height: 0,
+        },
+        defaultShowRoomId: null,
+      },
+      goods: {
+        id: 671,
+        name: 'VELOUR CREWNECK',
+        primaryImage: {
+          id: 15482,
+          path: 'goods/20220209/896a9747-d608-4c27-af79-21acf6d4b8e6.jpeg',
+          blurHash:
+            '|#NdO9of~qt7xuj[WBfQRjxuayayayWBj[ayj[ay~qayIUayM{j[WBj[t7fQj[WBj[ofayofWBayxuayIUayt7j[t7j[ayWBj[ofayofayWBj[ayWBfQayj[t7fQWBayWBofayoffQWBj[WBj[ofRjj[t7fQayayWBfQj[',
+          width: 2048,
+          height: 2048,
+        },
+        consumerPrice: 275000,
+        price: 247500,
+        kind: 'REAL',
+        discountRate: 10,
+        showRoomId: 0,
+        code: 'jpy0',
+        label: null,
+        type: 'NORMAL',
+        shippingMethod: 'PARCEL',
+        categoryIdList: [1, 44, 45],
+        categoryNameList: ['의류', '기능성 의류', '기능성 의류 상의'],
+        option: {
+          id: 1277,
+          bookingDate: 1698049881657,
+          itemList: [
+            {
+              title: '사이즈',
+              value: 'S',
+            },
+          ],
+        },
+        packageOption: null,
+      },
+      statusInfo: {
+        step: '20',
+        stepName: '결제완료',
+      },
+      ea: 2,
+      priceWithEa: 495000,
+      showRoom: null,
+      usedCoupon: null,
+    },
+  ],
+  failReason: null,
+  isRequiredInputForm: true,
+  inputFormInfo: {
+    expiryDate: 10,
+    sectionType: 'AIRLINE_TICKET',
+  },
+  isConsecutiveStay: false,
+  title: '결제를 완료했습니다',
+  description: '',
+  navigations: [],
+};
+
+export const orderFail = {
+  orderId: 2202081633552739,
+  orderStatus: {
+    step: '99',
+    stepName: '결제실패',
+  },
+  checkoutId: 2259,
+  orderer: null,
+  payment: null,
+  recipient: null,
+  itemOptionList: null,
+};
+
+export const bidOrderComplete = {
+  orderId: 2202220825281308,
+  orderStatus: {
+    step: '20',
+    stepName: '결제완료',
+  },
+  checkoutId: null,
+  orderer: {
+    email: 'RXC@rxc.co.kr',
+    name: 'RXC',
+    phone: '01012341234',
+  },
+  payment: {
+    paymentType: {
+      type: 'CREDIT_CARD',
+      name: '외환카드 (일시불)',
+    },
+    totalSalesPrice: 197000,
+    usedPoint: 0,
+    usedCartCouponSale: 0,
+    usedGoodsCouponSale: 0,
+    totalShippingCost: 0,
+    amount: 197000,
+    paymentDate: 1645485955000,
+    pg: 'kcp',
+    usedCartCoupon: null,
+  },
+  recipient: {
+    name: 'RXC',
+    phone: '01012341234',
+    postCode: '04766',
+    address: '서울 성동구 서울숲길 17',
+    addressDetail: '22222',
+    deliveryRequestMessage: '배송 전 연락 바랍니다',
+  },
+  goodsType: 'AUCTION',
+  itemOptionList: [
+    {
+      id: 441,
+      itemId: 410,
+      brand: null,
+      goods: {
+        id: 195,
+        name: 'QA - 220220 - \bAuction 01',
+        primaryImage: {
+          id: 11376,
+          path: 'goods/20220220/ff79b8c5-6ab1-4fb6-8663-d1f1eb2fd66b.jpeg',
+          blurHash:
+            '|dRo:9%M?wIUs.xuRjxuf6%gWBRPoeWBj[fQfkj[?wRjI9xuWBj]ogV@ofIAoetRbIt8V@jZjZWBs:ayWVofjZV@ayofaeofkCozV@Rit7bHkCj[V@jZaykCkCazofayaexuayaej[flfkaeWBj[ayj[j[ayjZjZaxkCbH',
+          width: 225,
+          height: 225,
+        },
+        consumerPrice: 197000,
+        price: 197000,
+        discountRate: 0,
+        showRoomId: 6,
+        code: '5py6',
+        label: null,
+        type: 'AUCTION',
+        shippingMethod: 'PARCEL',
+        categoryIdList: [],
+        categoryNameList: [],
+        option: {
+          id: 351,
+          itemList: [],
+        },
+        packageOption: null,
+      },
+      statusInfo: {
+        step: '20',
+        stepName: '결제완료',
+      },
+      ea: 1,
+      priceWithEa: 197000,
+      showRoom: {
+        id: 6,
+        name: '터프스튜디오',
+      },
+      usedCoupon: null,
+    },
+  ],
+};
