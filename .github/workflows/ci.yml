@@ -1,0 +1,330 @@
+# Continuous Integration
+#
+# 코드 검수를 위한 lint와 type 체크를 진행합니다.
+name: Continuous Integration
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+# 소스 브랜치 그룹명을 기준으로 실행중인 workflow를 취소합니다.
+concurrency:
+  group: ci-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  slack:
+    runs-on: ubuntu-latest
+    outputs:
+      CONTINUE: ${{ steps.ci-target.outputs.continue }}
+      SLACK_TS: ${{ steps.slack-action.outputs.ts }}
+    steps:
+      # Slack ID와 Github 계정을 매핑합니다.
+      - name: Mapping the Slack ID
+        id: mapped-slack-id
+        run: |
+          echo "author=${{ fromJson(vars.MEMBER_SLACK_IDS)[github.event.pull_request.user.login] }}" >> $GITHUB_OUTPUT
+
+      # Slack Pull Request Title의 특수문자를 escape 처리합니다. (대상문자: `&`,`<`,`>`)
+      - name: Escape Pull Request Title
+        id: escape-title
+        run: echo pr_title=$(echo '${{ github.event.pull_request.title }}' | sed -e 's/&/\&amp;/g;s/</\&lt;/g;s/>/\&gt;/g') >> $GITHUB_OUTPUT
+
+      # Slack PR 알림을 전송합니다.
+      - name: Post to a Slack channel
+        id: slack-action
+        uses: slackapi/slack-github-action@v1
+        with:
+          channel-id: ${{ vars.SLACK_PR_CHANNEL_ID }}
+          payload: |
+            {
+              "text": "${{ vars.PLATFORM_TITLE }} PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{ vars.PULL_REQUEST_EMOJI }} *<${{ github.event.repository.html_url }}|${{ vars.PLATFORM_TITLE }}>* Pull Request"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": " *<${{ github.event.pull_request.html_url || github.event.head_commit.url }}|#${{ github.event.pull_request.number }} ${{ steps.escape-title.outputs.pr_title }}>* \n> *From:* `${{ github.head_ref }}` \n> *To:* `${{ github.base_ref }}` \n> *Commits:* ${{ github.event.pull_request.commits }} \n> *Action:* ${{ github.event.action }}"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "by: <@${{ steps.mapped-slack-id.outputs.author }}>"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      # CI 대상 브랜치 여부 매개변수를 설정합니다.
+      - name: Check CI target branch
+        id: ci-target
+        run: |
+          CONTINUE_BRANCH=${{ contains('master,stage,develop', github.base_ref) }}
+          echo continue=$CONTINUE_BRANCH >> $GITHUB_OUTPUT
+          if [ $CONTINUE_BRANCH != 'true' ]; then
+            echo "${{ github.base_ref }} branch is not a branch for CI."
+          fi
+
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      use-cache: ${{ steps.set_vars.outputs.use_cache }}
+      changes-src: ${{ steps.changes.outputs.src }}
+    env:
+      SOURCE_BRANCH: ${{ github.head_ref }}
+      TARGET_BRANCH: ${{ github.base_ref }}
+    needs: slack
+    if: needs.slack.outputs.CONTINUE == 'true'
+    steps:
+      - name: Slack Reaction - Loading
+        uses: archive/github-actions-slack@v2.6.0
+        with:
+          slack-function: send-reaction
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack-channel: ${{ vars.SLACK_PR_CHANNEL_ID }}
+          slack-emoji-name: githubloading
+          slack-message-timestamp: ${{ needs.slack.outputs.SLACK_TS }}
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ env.SOURCE_BRANCH }}
+
+      - name: Branch strategy check for stage
+        if: ${{ env.TARGET_BRANCH == 'stage' && !startsWith(env.SOURCE_BRANCH, 'conflict/') }}
+        run: |
+          UNMERGED_COMMITS=$(git rev-list --count HEAD ^origin/develop)
+          echo Unmerged commits count: $UNMERGED_COMMITS
+          if [ $UNMERGED_COMMITS -gt 0 ]; then
+            echo There are unmerged commits in the develop!
+            git log --oneline HEAD ^origin/develop
+            exit 1
+          fi
+
+      - name: Branch strategy check for master
+        if: ${{ env.TARGET_BRANCH == 'master' }}
+        run: |
+          if [[ ! ${{ env.SOURCE_BRANCH }} =~ ^(feature|hotfix) ]]; then
+            echo Not Allowed Branch!
+            exit 1
+          fi
+
+          if [[ ${{ env.SOURCE_BRANCH }} =~ ^(feature) ]]; then
+            UNMERGED_COMMITS=$(git rev-list --count HEAD ^origin/stage)
+            echo Unmerged commits count: $UNMERGED_COMMITS
+
+            if [ $UNMERGED_COMMITS -gt 0 ]; then
+              echo There are unmerged commits in the stage!
+              git log --oneline HEAD ^origin/stage
+              exit 1
+            fi
+          fi
+
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            src:
+              - 'src/**'
+              - '.eslint*'
+              - 'craco.config.js'
+              - 'package.json'
+              - 'tsconfig*.json'
+            pui:
+              - 'src/pui/**/!(*.stories.tsx)'
+
+      - name: Set outputs
+        id: set_vars
+        run: |
+          echo "use_cache=${{ vars.USE_CACHE_YN == 'Y' }}" >> $GITHUB_OUTPUT
+          echo "outputs use-cache: ${{ vars.USE_CACHE_YN == 'Y' }}"
+          echo "outputs changes-src: ${{ steps.changes.outputs.src }}"
+          echo "outputs changes pui: ${{ steps.changes.outputs.pui }}"
+
+  # 의존성 모듈 설치 및 캐싱
+  caching-dependencies:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [16.x]
+    needs: [slack, prepare]
+    if: needs.prepare.result == 'success' && needs.prepare.outputs.use-cache == 'true' && needs.prepare.outputs.changes-src == 'true'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          always-auth: true
+          node-version: ${{ matrix.node }}
+          registry-url: https://registry.npmjs.org
+
+      - name: Get yarn cache directory
+        id: yarn-cache-dir-path
+        run: echo dir=$(yarn cache dir) >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            node_modules
+          key: ${{ runner.os }}-dependencies-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-dependencies-
+            ${{ runner.os }}-
+
+      - name: Show yarn cache directory
+        run: echo "yarn cache directory is ${{ steps.yarn-cache-dir-path.outputs.dir }}"
+
+      - name: Install dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+
+      - name: Reaction at the end
+        if: ${{ failure() }}
+        uses: archive/github-actions-slack@v2.6.0
+        with:
+          slack-function: send-reaction
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack-channel: ${{ vars.SLACK_PR_CHANNEL_ID }}
+          slack-emoji-name: heavy_exclamation_mark
+          slack-message-timestamp: ${{ needs.slack.outputs.SLACK_TS }}
+
+  # ES Lint
+  eslint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [16.x]
+    needs: [slack, prepare, caching-dependencies]
+    if: always() && needs.prepare.result == 'success' && needs.prepare.outputs.changes-src == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          registry-url: https://registry.npmjs.org
+
+      - name: Get yarn cache directory
+        if: needs.prepare.outputs.use-cache == 'true'
+        id: yarn-cache-dir-path
+        run: echo dir=$(yarn cache dir) >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        if: needs.prepare.outputs.use-cache == 'true'
+        uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            node_modules
+          key: ${{ runner.os }}-dependencies-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-dependencies-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        if: |
+          needs.prepare.outputs.use-cache != 'true' ||
+          steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+
+      - name: Run eslint
+        run: yarn run lint
+
+      - name: Reaction at the end
+        if: ${{ always() }}
+        uses: archive/github-actions-slack@v2.6.0
+        with:
+          slack-function: send-reaction
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack-channel: ${{ vars.SLACK_PR_CHANNEL_ID }}
+          slack-emoji-name: ${{ job.status == 'success' && 'eslint' || 'heavy_exclamation_mark' }}
+          slack-message-timestamp: ${{ needs.slack.outputs.SLACK_TS }}
+
+  # Type 체크
+  tsc:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [16.x]
+    needs: [slack, prepare, caching-dependencies]
+    if: always() && needs.prepare.result == 'success' && needs.prepare.outputs.changes-src == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          registry-url: https://registry.npmjs.org
+
+      - name: Get yarn cache directory
+        if: needs.prepare.outputs.use-cache == 'true'
+        id: yarn-cache-dir-path
+        run: echo dir=$(yarn cache dir) >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        if: needs.prepare.outputs.use-cache == 'true'
+        uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            node_modules
+          key: ${{ runner.os }}-dependencies-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-dependencies-
+            ${{ runner.os }}-
+
+      - name: Install dependencies
+        if: |
+          needs.prepare.outputs.use-cache != 'true' ||
+          steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+
+      - name: Run type check
+        run: yarn run type-check
+
+      - name: Reaction at the end
+        if: ${{ always() }}
+        uses: archive/github-actions-slack@v2.6.0
+        with:
+          slack-function: send-reaction
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack-channel: ${{ vars.SLACK_PR_CHANNEL_ID }}
+          slack-emoji-name: ${{ job.status == 'success' && 'typescript' || 'heavy_exclamation_mark' }}
+          slack-message-timestamp: ${{ needs.slack.outputs.SLACK_TS }}
+
+  finish:
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    needs: [slack, prepare, caching-dependencies, eslint, tsc]
+    steps:
+      - name: Slack Reaction - Finished
+        uses: archive/github-actions-slack@v2.6.0
+        with:
+          slack-function: send-reaction
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack-channel: ${{ vars.SLACK_PR_CHANNEL_ID }}
+          slack-emoji-name: ${{ contains(join(needs.*.result, ','), 'failure') && 'github-changes-requested' || 'github-check-mark' }}
+          slack-message-timestamp: ${{ needs.slack.outputs.SLACK_TS }}
