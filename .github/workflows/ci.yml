@@ -181,8 +181,8 @@ jobs:
         id: yarn-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
             node_modules
+            ~/.cache/yarn # yarn의 글로벌 캐시 디렉토리
           key: ${{ runner.os }}-dependencies-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-dependencies-
@@ -229,23 +229,16 @@ jobs:
         run: echo dir=$(yarn cache dir) >> $GITHUB_OUTPUT
 
       - name: Cache dependencies
-        if: needs.prepare.outputs.use-cache == 'true'
         uses: actions/cache@v3
         id: yarn-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
             node_modules
+            ~/.cache/yarn # yarn의 글로벌 캐시 디렉토리
           key: ${{ runner.os }}-dependencies-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-dependencies-
             ${{ runner.os }}-
-
-      - name: Install dependencies
-        if: |
-          needs.prepare.outputs.use-cache != 'true' ||
-          steps.yarn-cache.outputs.cache-hit != 'true'
-        run: yarn install --frozen-lockfile
 
       - name: Run eslint
         run: yarn run lint
@@ -284,23 +277,16 @@ jobs:
         run: echo dir=$(yarn cache dir) >> $GITHUB_OUTPUT
 
       - name: Cache dependencies
-        if: needs.prepare.outputs.use-cache == 'true'
         uses: actions/cache@v3
         id: yarn-cache
         with:
           path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
             node_modules
+            ~/.cache/yarn # yarn의 글로벌 캐시 디렉토리
           key: ${{ runner.os }}-dependencies-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-dependencies-
             ${{ runner.os }}-
-
-      - name: Install dependencies
-        if: |
-          needs.prepare.outputs.use-cache != 'true' ||
-          steps.yarn-cache.outputs.cache-hit != 'true'
-        run: yarn install --frozen-lockfile
 
       - name: Run type check
         run: yarn run type-check
