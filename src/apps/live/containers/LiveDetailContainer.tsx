@@ -56,7 +56,7 @@ interface Props {
 }
 
 /**
- * LiveDetailContainer 3
+ * LiveDetailContainer 4
  */
 export const LiveDetailContainer = ({ liveId }: Props) => {
   const theme = useTheme();
