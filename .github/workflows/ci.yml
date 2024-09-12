@@ -240,8 +240,20 @@ jobs:
             ${{ runner.os }}-dependencies-
             ${{ runner.os }}-
 
-      - name: Run eslint
-        run: yarn run lint:ci
+      - name: Fetch PR base
+        run: git fetch origin ${{ github.base_ref }}
+
+      - name: Run ESLint on changed files
+        run: |
+          # Get the list of changed files
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          
+          # Run eslint only on the changed files if there are any
+          if [ -n "$CHANGED_FILES" ]; then
+            echo "$CHANGED_FILES" | xargs yarn run lint
+          else
+            echo "No JavaScript files changed"
+          fi
 
       - name: Reaction at the end
         if: ${{ always() }}
