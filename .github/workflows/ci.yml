@@ -246,7 +246,7 @@ jobs:
       - name: Run ESLint on changed files
         run: |
           # Get the list of changed files
-          CHANGED_FILES=$(git diff --name-only $(git merge-base ${{ github.base_ref }} ${{ github.head_ref }})...${{ github.head_ref }})
+          CHANGED_FILES=$(git diff --name-only $(git merge-base ${{ github.base_ref }} ${{ github.head_ref }})...origin/${{ github.head_ref }})
           
           # Run eslint only on the changed files if there are any
           if [ -n "$CHANGED_FILES" ]; then
