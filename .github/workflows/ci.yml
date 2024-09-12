@@ -248,13 +248,13 @@ jobs:
       - name: Find common ancestor
         id: find_common_ancestor
         run: |
-          COMMON_ANCESTOR=$(git merge-base origin/${{ github.base_ref }} HEAD)
+          COMMON_ANCESTOR=$(git merge-base origin/${{ github.base_ref }} origin/${{ github.head_ref }})
           echo "COMMON_ANCESTOR=$COMMON_ANCESTOR" >> $GITHUB_ENV
 
       - name: Run ESLint on changed files
         run: |
           # Get the list of changed files
-          CHANGED_FILES=$(git diff --name-only ${{ env.COMMON_ANCESTOR }}...HEAD)
+          CHANGED_FILES=$(git diff --name-only ${{ env.COMMON_ANCESTOR }}...origin/${{ github.head_ref }})
           
           # Run eslint only on the changed files if there are any
           if [ -n "$CHANGED_FILES" ]; then
