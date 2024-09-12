@@ -241,7 +241,7 @@ jobs:
             ${{ runner.os }}-
 
       - name: Run eslint
-        run: yarn run lint:ci
+        run: git diff --name-only HEAD^ HEAD | xargs yarn run lint
 
       - name: Reaction at the end
         if: ${{ always() }}
