@@ -181,8 +181,8 @@ jobs:
         id: yarn-cache
         with:
           path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
             node_modules
-            ~/.cache/yarn # yarn의 글로벌 캐시 디렉토리
           key: ${{ runner.os }}-dependencies-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-dependencies-
@@ -233,15 +233,15 @@ jobs:
         id: yarn-cache
         with:
           path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
             node_modules
-            ~/.cache/yarn # yarn의 글로벌 캐시 디렉토리
           key: ${{ runner.os }}-dependencies-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-dependencies-
             ${{ runner.os }}-
 
       - name: Run eslint
-        run: yarn run lint
+        run: yarn run lint:ci
 
       - name: Reaction at the end
         if: ${{ always() }}
@@ -281,8 +281,8 @@ jobs:
         id: yarn-cache
         with:
           path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
             node_modules
-            ~/.cache/yarn # yarn의 글로벌 캐시 디렉토리
           key: ${{ runner.os }}-dependencies-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-dependencies-

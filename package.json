@@ -28,6 +28,7 @@
     "generate:content": "node ./content.generator.js",
     "type-check": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint --ext .tsx,.ts,.js --quiet src/",
+    "lint:ci": "eslint --cache --cache-location ./node_modules/.cache/.eslintcache --ext .tsx,.ts,.js --quiet src/",
     "lint:fix": "eslint --fix --ext .tsx,.ts,.js src/",
     "stylelint": "stylelint './src/**/*.{ts,tsx,js,jsx,css,scss}' '!./src/**/*.d.ts' --syntax 'css-in-js'",
     "stylelint:fix": "stylelint './src/**/*.{ts,tsx,js,jsx,css,scss}' '!./src/**/*.d.ts' --fix --syntax 'css-in-js'",
