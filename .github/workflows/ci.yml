@@ -240,13 +240,21 @@ jobs:
             ${{ runner.os }}-dependencies-
             ${{ runner.os }}-
 
-      - name: Fetch PR base
-        run: git fetch origin ${{ github.head_ref }}
+      - name: Fetch base branch
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          git fetch origin ${{ github.head_ref }}
+
+      - name: Find common ancestor
+        id: find_common_ancestor
+        run: |
+          COMMON_ANCESTOR=$(git merge-base origin/${{ github.base_ref }} HEAD)
+          echo "COMMON_ANCESTOR=$COMMON_ANCESTOR" >> $GITHUB_ENV
 
       - name: Run ESLint on changed files
         run: |
           # Get the list of changed files
-          CHANGED_FILES=$(git diff --name-only $(git merge-base ${{ github.base_ref }} ${{ github.head_ref }})...origin/${{ github.head_ref }})
+          CHANGED_FILES=$(git diff --name-only ${{ env.COMMON_ANCESTOR }}...HEAD)
           
           # Run eslint only on the changed files if there are any
           if [ -n "$CHANGED_FILES" ]; then
