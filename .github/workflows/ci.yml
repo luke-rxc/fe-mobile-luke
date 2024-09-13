@@ -216,6 +216,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+          with:
+          fetch-depth: 0
 
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v3
@@ -243,18 +245,19 @@ jobs:
       - name: Fetch base branch
         run: |
           git fetch origin ${{ github.base_ref }}
-          git fetch origin ${{ github.head_ref }}
+          # git fetch origin ${{ github.head_ref }}
 
-      - name: Find common ancestor
-        id: find_common_ancestor
-        run: |
-          COMMON_ANCESTOR=$(git merge-base origin/${{ github.base_ref }} origin/${{ github.head_ref }})
-          echo "COMMON_ANCESTOR=$COMMON_ANCESTOR" >> $GITHUB_ENV
+      # - name: Find common ancestor
+      #   id: find_common_ancestor
+      #   run: |
+      #     COMMON_ANCESTOR=$(git merge-base origin/${{ github.base_ref }} origin/${{ github.head_ref }})
+      #     echo "COMMON_ANCESTOR=$COMMON_ANCESTOR" >> $GITHUB_ENV
 
       - name: Run ESLint on changed files
         run: |
           # Get the list of changed files
-          CHANGED_FILES=$(git diff --name-only ${{ env.COMMON_ANCESTOR }}...origin/${{ github.head_ref }} | grep -E '\.(tsx|ts|js)$')
+          # CHANGED_FILES=$(git diff --name-only ${{ env.COMMON_ANCESTOR }}...origin/${{ github.head_ref }} | grep -E '\.(tsx|ts|js)$')
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- '*.js' '*.jsx' '*.ts' '*.tsx')
           
           # Run eslint only on the changed files if there are any
           if [ -n "$CHANGED_FILES" ]; then
