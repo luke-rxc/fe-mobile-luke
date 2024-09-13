@@ -245,25 +245,20 @@ jobs:
       - name: Fetch base branch
         run: |
           git fetch origin ${{ github.base_ref }}
-          # git fetch origin ${{ github.head_ref }}
-
-      # - name: Find common ancestor
-      #   id: find_common_ancestor
-      #   run: |
-      #     COMMON_ANCESTOR=$(git merge-base origin/${{ github.base_ref }} origin/${{ github.head_ref }})
-      #     echo "COMMON_ANCESTOR=$COMMON_ANCESTOR" >> $GITHUB_ENV
 
       - name: Run ESLint on changed files
         run: |
           # Get the list of changed files
-          # CHANGED_FILES=$(git diff --name-only ${{ env.COMMON_ANCESTOR }}...origin/${{ github.head_ref }} | grep -E '\.(tsx|ts|js)$')
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- '*.js' '*.jsx' '*.ts' '*.tsx')
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(tsx|ts|js)$')
           
+          echo "lint target files:" 
+          echo "$CHANGED_FILES"
+
           # Run eslint only on the changed files if there are any
           if [ -n "$CHANGED_FILES" ]; then
             echo "$CHANGED_FILES" | xargs yarn run lint:ci
           else
-            echo "No JavaScript files changed"
+            echo "No files changed"
           fi
 
       - name: Reaction at the end
