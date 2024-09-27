@@ -251,7 +251,13 @@ jobs:
           # Get the list of changed files
           DIFF_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
           echo "$DIFF_FILES"
-          CHANGED_FILES=$(echo "$DIFF_FILES" | grep -E '\.(tsx|ts|js)$')
+
+          if [ -n "$DIFF_FILES" ]; then
+            CHANGED_FILES=$(echo "$DIFF_FILES" | grep -E '\.(tsx|ts|js)$')
+          else
+            CHANGED_FILES=""
+          fi
+          
           echo "$CHANGED_FILES"
           
           echo "lint target files:" 
