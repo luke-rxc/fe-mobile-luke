@@ -2,7 +2,7 @@
   * [PUI리스트](../README.md)
   * [Archived History](https://www.notion.so/rxc/TextField-a3230f771495460a9dd764d7c1e4a13a?pvs=4)
 
-## Changelog
+## Changelog 1
 
 ### [2024.03.20](https://rxc.atlassian.net/browse/FE-4075)
 #### Changed
