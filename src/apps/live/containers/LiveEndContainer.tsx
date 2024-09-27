@@ -26,6 +26,9 @@ interface Props {
   liveId: number;
 }
 
+/**
+ * LiveEndContainer 6
+ */
 export const LiveEndContainer = ({ liveId }: Props) => {
   const logService = useLiveEndLogService();
   const { userInfo, handleLogin } = useUser();
