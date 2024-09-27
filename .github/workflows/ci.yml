@@ -249,7 +249,10 @@ jobs:
       - name: Run ESLint on changed files
         run: |
           # Get the list of changed files
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(tsx|ts|js)$')
+          DIFF_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          echo "$DIFF_FILES"
+          CHANGED_FILES=$(echo "$DIFF_FILES" | grep -E '\.(tsx|ts|js)$')
+          echo "$CHANGED_FILES"
           
           echo "lint target files:" 
           echo "$CHANGED_FILES"
